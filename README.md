@@ -16,14 +16,14 @@ When a language model writes your training data, **its tokens carry the label**.
 
 ## Key findings
 
-| | Finding | Evidence |
-|---|---|---|
-| 🔍 | **The artefact comes from the generator, not from fraud.** 11–50% of decimal endings and GPT-2 tokens have fraud rates outside ±2σ, against 0–5% with shuffled labels or in the NumPy-simulated source data. | [`src/forensics.py`](src/forensics.py), Fig. 1 |
-| 📈 | **Generator-aware features lift one LightGBM from 0.94674 to 0.95063 OOF AUC.** Every feature step improves all five folds. | [`src/exp3.py`](src/exp3.py), Fig. 3 |
-| 🧩 | **A model that sees only decimal digits and token tails reaches 0.611 AUC**, with no magnitudes at all. | `artefact_only` in [`results/`](results/results_ablation.jsonl) |
-| ➕ | **The signal is nearly additive.** Three-leaf trees beat 31-leaf trees by 0.0013, and a logistic GLM matches GBDTs within 0.0003. | [`src/glm.py`](src/glm.py) |
-| 🎯 | **An honest blend reaches 0.95099** under nested cross-validation. Public scores tracked validation within 0.0006. | [`src/ensemble.py`](src/ensemble.py) |
-| ⚠️ | **Public-leaderboard gaps below about 0.0005 are noise.** On 60,000-row slices the blend's +0.00040 edge flips sign 6% of the time. | Paper, Section 8.1 |
+| Finding | Evidence |
+|---|---|
+| **The artefact comes from the generator, not from fraud.** 11–50% of decimal endings and GPT-2 tokens have fraud rates outside ±2σ, against 0–5% with shuffled labels or in the NumPy-simulated source data. | [`src/forensics.py`](src/forensics.py), Fig. 1 |
+| **Generator-aware features lift one LightGBM from 0.94674 to 0.95063 OOF AUC.** From shallow trees onward, every feature step improves all five folds. | [`src/exp3.py`](src/exp3.py), Fig. 3 |
+| **A model that sees only decimal digits and token tails reaches 0.611 AUC**, with no magnitudes at all. | `artefact_only` in [`results/`](results/results_ablation.jsonl) |
+| **The signal is nearly additive.** Three-leaf trees beat 31-leaf trees by 0.0013, and a logistic GLM matches GBDTs within 0.0003. | [`src/glm.py`](src/glm.py) |
+| **An honest blend reaches 0.95099** under nested cross-validation. Public scores tracked validation within 0.0006. | [`src/ensemble.py`](src/ensemble.py) |
+| **Public-leaderboard gaps below about 0.0005 are noise.** On 60,000-row slices the blend's +0.00040 edge flips sign 6% of the time. | Paper, Section 8.1 |
 
 <p align="center">
   <img src="manuscript/fig/fig1_forensics.png" width="760" alt="Funnel test: share of value groups with fraud rate outside two standard deviations, for each generator unit, in competition data with real labels, shuffled labels and the original NumPy data">
