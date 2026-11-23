@@ -44,6 +44,6 @@ figures:
 	$(PY) manuscript/make_figures.py
 
 paper:
-	cd manuscript && npm install && node build_docx.js
+	cd manuscript && npm install && node build_docx.js && EDITION=portfolio node build_docx.js
 
 all: tokens forensics ablation models blend figures

@@ -7,7 +7,7 @@
 [![Python 3.14](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Kaggle S6E11](https://img.shields.io/badge/Kaggle-Playground%20S6E11-20BEFF?logo=kaggle&logoColor=white)](https://www.kaggle.com/competitions/playground-series-s6e11)
-[![Paper](https://img.shields.io/badge/paper-PDF-B31B1B.svg)](manuscript/Generator_Handwriting_ESWA_manuscript.pdf)
+[![Paper](https://img.shields.io/badge/paper-PDF-B31B1B.svg)](manuscript/Roman_2026_Generator_Handwriting_portfolio.pdf)
 ![OOF AUC](https://img.shields.io/badge/OOF%20AUC-0.95099-blue)
 
 </div>
@@ -101,7 +101,8 @@ The original data carry no generator artefacts, and domain features only re-expr
 │   ├── train.py, train2.py, digits.py   # earlier baselines kept for the ablation history
 ├── results/              # small result tables used by the figures and the paper
 ├── manuscript/
-│   ├── Generator_Handwriting_ESWA_manuscript.pdf   # paper (Elsevier ESWA format)
+│   ├── Roman_2026_Generator_Handwriting_portfolio.pdf   # paper, preprint edition
+│   ├── Generator_Handwriting_ESWA_manuscript.pdf       # same paper, Elsevier ESWA submission format
 │   ├── build_docx.js     # builds the Word manuscript (docx-js)
 │   ├── make_figures.py   # print figures from results/
 │   └── fig/              # figures
@@ -138,7 +139,7 @@ make ablation    # ablation ladder + artefact-only -> results/         (~10 min)
 make models      # LightGBM, XGBoost, CatBoost, GLM, token network     (~1.5 h on an M5 laptop)
 make blend       # nested-CV blend -> submission.csv                   (~1 min)
 make figures     # manuscript/fig/*.png
-make paper       # manuscript .docx (needs Node.js; PDF export via Word)
+make paper       # both manuscript editions as .docx (needs Node.js; PDF export via Word)
 ```
 
 Every script also runs on its own, for example `python src/train3.py lgb --tok --nf --lr 0.02 --seeds 3 --tag _s3`. Runtimes are for one Apple M5 laptop with 10 CPU cores and 16 GB of RAM. The neural network uses the Apple GPU (MPS) when available and the CPU otherwise.
@@ -150,6 +151,10 @@ Every script also runs on its own, for example `python src/train3.py lgb --tok -
 - The blend is scored by **nested** cross-validation.
 - The public leaderboard is used as a sanity check only, never for selection. Section 8.1 of the paper shows why: a single public score varies by about ±0.003.
 
+## Paper
+
+The full write-up is available as a [preprint edition](manuscript/Roman_2026_Generator_Handwriting_portfolio.pdf) (13 pages) and in [Elsevier *Expert Systems with Applications* submission format](manuscript/Generator_Handwriting_ESWA_manuscript.pdf) (double-spaced, line-numbered).
+
 ## Citation
 
 If you use this work, please cite it. GitHub's **"Cite this repository"** button reads [`CITATION.cff`](CITATION.cff).
@@ -157,7 +162,7 @@ If you use this work, please cite it. GitHub's **"Cite this repository"** button
 ```bibtex
 @misc{roman2026generatorhandwriting,
   title  = {Reading the Generator's Handwriting: Tokenizer-Aware Features for Fraud Detection on LLM-Synthesised Tabular Data},
-  author = {Roman, Jace},
+  author = {Roman, Jace E.},
   year   = {2026},
   url    = {https://github.com/z5rcnws7bz-eng/reading-the-generators-handwriting}
 }

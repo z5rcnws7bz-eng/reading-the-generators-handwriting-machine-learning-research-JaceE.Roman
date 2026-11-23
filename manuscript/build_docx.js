@@ -5,14 +5,22 @@ const fs = require("fs");
 const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell, WidthType, BorderStyle,
-  AlignmentType, HeadingLevel, Footer, PageNumber, LevelFormat, LineNumberRestartFormat, PageBreak,
+  AlignmentType, HeadingLevel, Header, Footer, PageNumber, LevelFormat, LineNumberRestartFormat, PageBreak,
   ShadingType, TabStopType, VerticalAlign,
   Math: OMath, MathRun, MathFraction, MathSubScript, MathSum, MathRadical, MathSuperScript,
 } = require("docx");
 
 const FONT = "Times New Roman";
 const FIG = path.join(__dirname, "fig");
-const DOUBLE = { line: 480, lineRule: "auto" };
+// EDITION=submission (ESWA: A4, double spacing, line numbers) | EDITION=portfolio (US Letter, 1.15 spacing, camera-ready)
+const ED = process.env.EDITION || "submission";
+const PORT = ED === "portfolio";
+const DOUBLE = PORT ? { line: 276, lineRule: "auto" } : { line: 480, lineRule: "auto" };
+const AUTHOR = "Jace E. Roman";
+const AFFIL = "Temple CPH, Temple University, Philadelphia, PA, United States";
+const EMAIL = "jace.roman@temple.edu";
+const REPO = "https://github.com/z5rcnws7bz-eng/reading-the-generators-handwriting";
+const ACCENT = "1F5FA8";
 const SINGLE = { line: 240, lineRule: "auto" };
 
 // --- inline markup: **bold**, *italic*, ^sup^, ~sub~ ------------------------------------------
@@ -39,7 +47,7 @@ const numbered = (t, ref = "contrib") => new Paragraph({ numbering: { reference:
   spacing: { ...DOUBLE, after: 0 }, alignment: AlignmentType.JUSTIFIED });
 
 // --- tables: Elsevier three-line style, caption above -----------------------------------------
-const TW = 9026; // A4 text width in DXA with 1-inch margins
+const TW = PORT ? 9360 : 9026; // text width in DXA with 1-inch margins (Letter : A4)
 const line = { style: BorderStyle.SINGLE, size: 8, color: "000000" };
 const none = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
 function table(num, caption, header, rows, widths, notes) {
@@ -195,11 +203,10 @@ add(H1("6. Experiments and results"),
     ["XGBoost, depth 2, tokens + frequencies", "Shallow trees", "0.94898", "3 min"],
     ["**Logit-rank hill-climbing ensemble**", "Ensemble", "**0.95099** (nested)", "seconds"],
   ], [3.2, 2.6, 1.6, 1.4], "*Note.* Times are wall-clock on one Apple M5 laptop (10 CPU cores, 16 GB) for five folds, measured while other jobs shared the machine. TE = target encoding."),
-  P("**Leaderboard.** Table 4 reports the submissions made during the study. Public scores tracked cross-validated scores closely, and in the same order."),
+  P("**Leaderboard.** Table 4 reports the two submissions scored during the study. Public scores tracked cross-validated scores closely and in the same order, and both moved by about the amount cross-validation predicted. The final ensemble (cross-validated AUC 0.95099) is the submission selected for the private leaderboard."),
   table(4, "Cross-validated and public-leaderboard AUC of the submissions.", ["Submission", "Content", "CV AUC", "Public AUC"], [
     ["v1", "Deep LightGBM + XGBoost, raw features", "0.94724", "0.94754"],
     ["v2", "Shallow GBDTs with digits, TE, tokens, frequencies", "0.95069", "0.95126"],
-    ["v3", "v2 + GLM + token-embedding network", "0.95099", "pending"],
   ], [1.2, 4.6, 1.4, 1.4]),
 );
 
@@ -241,12 +248,13 @@ add(H1("9. Conclusion"),
 );
 
 // ---------- Declarations ----------
-const decl = (title, text) => [new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun(title)] }), PN(text)];
+const decl = (title, text) => [new Paragraph({ heading: PORT ? HeadingLevel.HEADING_2 : HeadingLevel.HEADING_1, children: [new TextRun(title)] }), PN(text)];
+if (PORT) add(H1("Declarations"));
 add(
-  decl("CRediT authorship contribution statement", "**[Author name]:** Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Visualization, Writing – original draft, Writing – review & editing."),
+  decl("CRediT authorship contribution statement", "**" + AUTHOR + ":** Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Visualization, Writing – original draft, Writing – review & editing."),
   decl("Declaration of competing interest", "The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper."),
-  decl("Data availability", "The competition data are available from Kaggle under the competition rules (Kaggle, 2026). The original dataset is available under CC0 (uditjain13, 2026). The analysis code is available from the corresponding author on request [replace with repository link]."),
-  decl("Declaration of generative AI and AI-assisted technologies in the manuscript preparation process", "During the preparation of this work the author(s) used Claude (Anthropic) to write analysis code, run experiments and draft the manuscript. After using this tool, the author(s) reviewed and edited the content as needed and take(s) full responsibility for the content of the published article."),
+  decl("Data availability", "The competition data are available from Kaggle under the competition rules (Kaggle, 2026). The original dataset is available under CC0 (uditjain13, 2026). The analysis code, result tables and figure scripts are available at " + REPO + " under the MIT licence."),
+  decl("Declaration of generative AI and AI-assisted technologies in the manuscript preparation process", "During the preparation of this work the author(s) used Claude (Anthropic) to write analysis code, run sandboxed experiments and draft the first manuscript. After using this tool, the author(s) reviewed and edited the content as needed and take(s) full responsibility for the content of the published article."),
   decl("Funding", "This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors."),
 );
 
@@ -271,11 +279,11 @@ const REFS = [
   "Xu, L., Skoularidou, M., Cuesta-Infante, A., & Veeramachaneni, K. (2019). Modeling tabular data using conditional GAN. In *Advances in Neural Information Processing Systems 32* (pp. 7335–7345).",
 ];
 add(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("References")] }),
-  REFS.map((r) => new Paragraph({ children: runs(r), alignment: AlignmentType.LEFT, spacing: { ...DOUBLE, after: 0 },
+  REFS.map((r) => new Paragraph({ children: runs(r), alignment: AlignmentType.LEFT, spacing: { ...DOUBLE, after: PORT ? 80 : 0 },
     indent: { left: 720, hanging: 720 } })));
 
 // ---------- Appendix ----------
-add(new Paragraph({ children: [new PageBreak()] }),
+add(...(PORT ? [] : [new Paragraph({ children: [new PageBreak()] })]),
   H1("Appendix A. Reproducibility"),
   PN("All code runs on one Apple M5 laptop (10 CPU cores, 16 GB memory) with Python 3.14, LightGBM 4.7, XGBoost 3.4, CatBoost, scikit-learn and PyTorch 2.15 with the Metal (MPS) backend. The GPT-2 tokenizer files were obtained from the Hugging Face openai-community/gpt2 repository and checked by asserting that “ 1269.35” splits into “ 12”, “69”, “.” and “35”. Table A.1 lists the scripts."),
   table("A.1", "Analysis scripts.", ["Script", "Role"], [
@@ -291,15 +299,16 @@ add(new Paragraph({ children: [new PageBreak()] }),
 );
 
 // ============================================================================================
-const titlePage = [
+const rule = () => new Paragraph({ spacing: { before: 80, after: 80 }, border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "999999", space: 1 } }, children: [] });
+const submissionTitle = [
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...DOUBLE, after: 240 },
     children: [new TextRun({ text: TITLE, bold: true, size: 32 })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: DOUBLE,
-    children: [new TextRun("[Author name]"), new TextRun({ text: "a,", superScript: true }), new TextRun({ text: "*", superScript: true })] }),
+    children: [new TextRun(AUTHOR), new TextRun({ text: "a,*", superScript: true })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: DOUBLE,
-    children: [new TextRun({ text: "a", superScript: true }), new TextRun({ text: " [Department, Institution, City, Postal code, Country]", italics: true })] }),
+    children: [new TextRun({ text: "a", superScript: true }), new TextRun({ text: " " + AFFIL, italics: true })] }),
   new Paragraph({ spacing: { ...DOUBLE, before: 480 }, children: [new TextRun({ text: "*", superScript: true }),
-    new TextRun(" Corresponding author. E-mail address: [email address]. ORCID: [0000-0000-0000-0000].")] }),
+    new TextRun(" Corresponding author. E-mail address: " + EMAIL + ".")] }),
   new Paragraph({ spacing: DOUBLE, children: runs("*Article type:* Research article. *Word count of abstract:* " + nWords + ".") }),
   new Paragraph({ children: [new PageBreak()] }),
   new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("Highlights")] }),
@@ -310,17 +319,45 @@ const titlePage = [
   new Paragraph({ spacing: { ...DOUBLE, before: 240 }, children: [new TextRun({ text: "Keywords: ", italics: true }), new TextRun(KEYWORDS)] }),
   new Paragraph({ children: [new PageBreak()] }),
 ];
+const highlightBox = new Table({ width: { size: TW, type: WidthType.DXA }, columnWidths: [TW], rows: [new TableRow({ cantSplit: true, children: [new TableCell({
+  width: { size: TW, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: "auto", fill: "EEF3F9" },
+  margins: { top: 100, bottom: 100, left: 240, right: 240 },
+  borders: { top: none, bottom: none, right: none, left: { style: BorderStyle.SINGLE, size: 24, color: ACCENT } },
+  children: [new Paragraph({ spacing: { ...SINGLE, after: 80 }, children: [new TextRun({ text: "Highlights", bold: true, color: ACCENT })] }),
+    ...HIGHLIGHTS.map((h) => new Paragraph({ numbering: { reference: "bullets", level: 0 }, spacing: { line: 252, lineRule: "auto", after: 20 }, children: runs(h) }))],
+})] })] });
+const portfolioTitle = [
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...SINGLE, after: 200 },
+    children: [new TextRun({ text: "RESEARCH ARTICLE  \u00b7  PREPRINT  \u00b7  NOVEMBER 2026", size: 18, color: "666666", characterSpacing: 20 })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { line: 288, lineRule: "auto", after: 200 },
+    children: ["Reading the generator\u2019s handwriting:", "Tokenizer-aware features for fraud detection", "on LLM-synthesised tabular data"]
+      .map((t, i) => new TextRun({ text: t, bold: true, size: 34, break: i ? 1 : 0 })) }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...SINGLE, after: 60 },
+    children: [new TextRun({ text: AUTHOR, size: 26 }), new TextRun({ text: "a,*", superScript: true, size: 26 })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...SINGLE, after: 60 },
+    children: [new TextRun({ text: "a", superScript: true, size: 22 }), new TextRun({ text: " " + AFFIL, italics: true, size: 22 })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...SINGLE, after: 20 },
+    children: [new TextRun({ text: "*", superScript: true, size: 20 }), new TextRun({ text: " Correspondence: " + EMAIL, size: 20, color: "444444" })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { ...SINGLE, after: 80 },
+    children: [new TextRun({ text: "Code: " + REPO.replace("https://", ""), size: 20, color: "444444" })] }),
+  rule(),
+  new Paragraph({ spacing: { ...SINGLE, before: 120, after: 80 }, children: [new TextRun({ text: "Abstract", bold: true })] }),
+  PN(ABSTRACT),
+  new Paragraph({ spacing: { ...DOUBLE, before: 100, after: 160 }, children: [new TextRun({ text: "Keywords: ", bold: true }), new TextRun(KEYWORDS)] }),
+  highlightBox,
+];
+const titlePage = PORT ? portfolioTitle : submissionTitle;
 
 const doc = new Document({
-  creator: "[Author name]", title: TITLE, description: "Manuscript prepared in the Expert Systems with Applications format",
+  creator: AUTHOR, title: TITLE, description: PORT ? "Portfolio edition (preprint)" : "Manuscript prepared in the Expert Systems with Applications format",
   styles: {
     default: { document: { run: { font: FONT, size: 24 }, paragraph: { spacing: DOUBLE } } },
     characterStyles: [{ id: "LineNumber", name: "line number", basedOn: "DefaultParagraphFont", run: { font: FONT, size: 20 } }],
     paragraphStyles: [
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { font: FONT, size: 24, bold: true }, paragraph: { spacing: { ...DOUBLE, before: 240, after: 0 }, keepNext: true, outlineLevel: 0 } },
+        run: { font: FONT, size: PORT ? 26 : 24, bold: true }, paragraph: { spacing: PORT ? { line: 276, lineRule: "auto", before: 360, after: 120 } : { ...DOUBLE, before: 240, after: 0 }, keepNext: true, outlineLevel: 0 } },
       { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { font: FONT, size: 24, italics: true }, paragraph: { spacing: { ...DOUBLE, before: 120, after: 0 }, keepNext: true, outlineLevel: 1 } },
+        run: { font: FONT, size: 24, italics: true, bold: PORT }, paragraph: { spacing: PORT ? { line: 276, lineRule: "auto", before: 240, after: 60 } : { ...DOUBLE, before: 120, after: 0 }, keepNext: true, outlineLevel: 1 } },
     ],
   },
   numbering: { config: [
@@ -330,18 +367,32 @@ const doc = new Document({
       style: { run: { font: FONT }, paragraph: { indent: { left: 720, hanging: 432 } } } }] },
   ] },
   sections: [{
-    properties: {
+    properties: PORT ? {
+      page: { size: { width: 12240, height: 15840 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440, header: 708, footer: 708 } },
+      titlePage: true,
+    } : {
       page: { size: { width: 11906, height: 16838 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
       lineNumbers: { countBy: 1, restart: LineNumberRestartFormat.CONTINUOUS, distance: 360 },
     },
-    footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: SINGLE,
+    headers: PORT ? {
+      default: new Header({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, spacing: SINGLE,
+        border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "BBBBBB", space: 4 } },
+        children: [new TextRun({ text: "J. E. Roman  \u00b7  Reading the generator\u2019s handwriting", size: 18, color: "666666" })] })] }),
+      first: new Header({ children: [new Paragraph({ children: [] })] }),
+    } : undefined,
+    footers: PORT ? {
+      default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: SINGLE,
+        children: [new TextRun({ size: 18, color: "666666", children: ["Page ", PageNumber.CURRENT, " of ", PageNumber.TOTAL_PAGES] })] })] }),
+      first: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: SINGLE,
+        children: [new TextRun({ size: 18, color: "666666", children: ["Page ", PageNumber.CURRENT, " of ", PageNumber.TOTAL_PAGES] })] })] }),
+    } : { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: SINGLE,
       children: [new TextRun({ children: [PageNumber.CURRENT] })] })] }) },
     children: [...titlePage, ...body],
   }],
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  const out = path.join(__dirname, "Generator_Handwriting_ESWA_manuscript.docx");
+  const out = path.join(__dirname, PORT ? "Roman_2026_Generator_Handwriting_portfolio.docx" : "Generator_Handwriting_ESWA_manuscript.docx");
   fs.writeFileSync(out, buf);
   console.log("wrote", out, "| abstract words:", nWords, "| highlights:", HIGHLIGHTS.map((h) => h.length).join(","));
 });

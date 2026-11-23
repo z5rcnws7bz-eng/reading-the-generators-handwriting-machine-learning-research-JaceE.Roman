@@ -4,7 +4,8 @@ title: "Reading the Generator's Handwriting: Tokenizer-Aware Features for Fraud 
 type: software
 authors:
   - family-names: Roman
-    given-names: Jace
+    given-names: Jace E.
+    affiliation: "Temple University"
 license: MIT
 repository-code: "https://github.com/z5rcnws7bz-eng/reading-the-generators-handwriting"
 date-released: 2026-11-23
