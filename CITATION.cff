@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software or its findings, please cite it as below."
+title: "Reading the Generator's Handwriting: Tokenizer-Aware Features for Fraud Detection on LLM-Synthesised Tabular Data"
+type: software
+authors:
+  - family-names: Roman
+    given-names: Jace
+license: MIT
+repository-code: "https://github.com/z5rcnws7bz-eng/reading-the-generators-handwriting"
+date-released: 2026-11-23
+version: 1.0.0
+keywords:
+  - synthetic tabular data
+  - fraud detection
+  - large language models
+  - GPT-2 tokenization
+  - target encoding
+  - gradient boosting
+  - data leakage
+  - Kaggle
+abstract: >-
+  Synthetic tabular benchmarks written by language models carry the class label in the
+  generator's tokens. On Kaggle Playground Series S6E11 (credit-card fraud, 699,960 rows),
+  re-expressing numbers in the units GPT-2 emitted, encoding them leak-free in-fold and fitting
+  shallow additive models lifts a single LightGBM from 0.94674 to 0.95063 out-of-fold ROC-AUC;
+  a nested-CV blend reaches 0.95099.

@@ -1,0 +1,13 @@
+# Versions used for the paper (Python 3.14.7, macOS, Apple M5). Older compatible versions should work.
+numpy==2.5.5
+pandas==3.1.1
+scipy==1.18.1
+scikit-learn==1.9.1
+lightgbm==4.7.0
+xgboost==3.4.1
+catboost==1.2.10
+torch==2.15.0            # token-embedding network; uses Apple MPS or CUDA if available, else CPU
+tokenizers==0.23.3       # GPT-2 byte-pair tokenizer
+huggingface_hub==2.4.0   # downloads the GPT-2 tokenizer files
+matplotlib==3.11.2       # figures
+pymupdf==2.1             # optional: PDF page checks for the manuscript

@@ -1,0 +1,17 @@
+data,unit,groups,outside_2sd_real,outside_2sd_shuffled,chi2_p
+competition,amount_usd | decimal part,100,0.29,0.032,4.985809050960068e-33
+competition,account_balance_usd | decimal part,100,0.11,0.046,0.0003112470690898956
+competition,hours_since_last_txn | decimal part,100,0.47,0.052,4.045725682594409e-100
+competition,distance_from_home_km | decimal part,100,0.23,0.048,8.065439592118534e-18
+competition,velocity_score | decimal part,10,0.4,0.0,1.9183246399838154e-58
+competition,merchant_risk_score | decimal part,10,0.5,0.04,3.0936170695585546e-06
+competition,account_balance_usd | 2nd BPE token,358,0.254,0.04,1.639995927552088e-94
+competition,amount_usd | 2nd BPE token,92,0.315,0.035,0.01679110446481785
+original,amount_usd | decimal part,100,0.03,0.03,0.4457204548523378
+original,account_balance_usd | decimal part,100,0.05,0.042,0.531584734884046
+original,hours_since_last_txn | decimal part,100,0.02,0.034,0.7700129916356699
+original,distance_from_home_km | decimal part,100,0.03,0.028,0.09316728697061503
+original,velocity_score | decimal part,10,0.1,0.06,0.18468289808970723
+original,merchant_risk_score | decimal part,10,0.0,0.02,0.24056554235677202
+original,account_balance_usd | 2nd BPE token,109,0.0,0.039,0.9560686982678474
+original,amount_usd | 2nd BPE token,0,,,

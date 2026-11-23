@@ -1,0 +1,27 @@
+# Data and model outputs: never committed (Kaggle competition rules)
+data/*
+!data/README.md
+oof/
+exp/
+submissions/
+submission.csv
+*.csv
+!results/*.csv
+catboost_info/
+
+# Python / Node / environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+
+# Manuscript working files (author-specific Word versions and lock files)
+manuscript/*.docx
+manuscript/~$*
+
+# OS, editor and agent settings
+.DS_Store
+.claude/
+.vscode/
+.idea/
